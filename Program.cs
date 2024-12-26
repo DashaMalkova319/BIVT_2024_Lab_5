@@ -137,27 +137,12 @@ public class Program
         // code here
         if (FindMaxIndex(A) < FindMaxIndex(B))
         {
-            double sum = 0;
-            int count = 0;
-            for (int i = FindMaxIndex(A) + 1; i < A.Length; i++)
-            {
-                sum += A[i];
-                count++;
-            }
-            sum /= count;
-            A[FindMaxIndex(A)] = sum;
+            A[FindMaxIndex(A)] = FindMiddle(A);
+            
         }
         else
         {
-            double sum = 0;
-            int count = 0;
-            for (int i = FindMaxIndex(B) + 1; i < B.Length; i++)
-            {
-                sum += B[i];
-                count++;
-            }
-            sum /= count;
-            B[FindMaxIndex(B)] = sum;
+            B[FindMaxIndex(B)] = FindMiddle(B);
         }
         // create and use FindMaxIndex(array);
         // only 1 array has to be changed!
@@ -177,6 +162,18 @@ public class Program
             }
         }
         return ind;
+    }
+    public double FindMiddle(double[] array)
+    {
+        double sum = 0;
+        int count = 0;
+        for (int i = FindMaxIndex(array) + 1; i < array.Length; i++)
+        {
+            sum += array[i];
+            count++;
+        }
+        sum /= count;
+        return sum;
     }
 
     public void Task_2_3(ref int[,] B, ref int[,] C)
@@ -572,63 +569,35 @@ public class Program
     public void Task_2_20(ref int[,] A, ref int[,] B)
     {
         // code here
-        for (int j = A.GetLength(1) - 1; j >= 0; j--)
-        {
-            int count = 0;
-            for (int i = 0; i < A.GetLength(0); i++)
-            {
-                if (A[i, j] == 0)
-                {
-                    count++;
-                }
-            }
-            if (count == 0)
-            {
-                A = RemoveColumn1(ref A, j);
-            }
-        }
+        A = RemoveColumn1(ref A);
+        B = RemoveColumn1(ref B);
 
-        for (int j = B.GetLength(1) - 1; j >= 0; j--)
-        {
-            int count = 0;
-            for (int i = 0; i < B.GetLength(0); i++)
-            {
-                if (B[i, j] == 0)
-                {
-                    count++;
-                    //Console.WriteLine(count);
-                }
-
-            }
-            if (count == 0)
-            {
-                B = RemoveColumn1(ref B, j);
-            }
-        }
 
         // use RemoveColumn(matrix, columnIndex); from 2_10
 
         // end
     }
-    public int[,] RemoveColumn1(ref int[,] matrix, int columnIndex)
+    public int[,] RemoveColumn1(ref int[,] matrix)
     {
-        int[,] answer = new int[matrix.GetLength(0), matrix.GetLength(1) - 1];
-        for (int j = 0; j < columnIndex; j++)
+        for (int j = 0; j < matrix.GetLength(1); j++)
         {
+            bool b = false;
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
-                answer[i, j] = matrix[i, j];
+                if (matrix[i, j] == 0)
+                {
+                    b = true; break;
+                }
             }
-        }
-        for (int j = columnIndex; j < answer.GetLength(1); j++)
-        {
-            for (int i = 0; i < matrix.GetLength(0); i++)
+            if (b == false)
             {
-                answer[i, j] = matrix[i, j + 1];
+                RemoveColumn(ref matrix, j);
+                j--;
             }
         }
-        return answer;
+        return matrix;
     }
+    
 
     public void Task_2_21(int[,] A, int[,] B, out int[] answerA, out int[] answerB)
     {
@@ -965,7 +934,7 @@ public class Program
     public int Task_3_4(int[,] matrix, bool isUpperTriangle)
     {
         int answer = 0;
-        GetTriangle getTriangle = default(GetTriangle);
+        //GetTriangle getTriangle = default(GetTriangle);
         if (isUpperTriangle)
         {
             answer = GetSum(GetUpperTriange, matrix);
@@ -1079,7 +1048,7 @@ public class Program
 
     public void Task_3_10(ref int[,] matrix)
     {
-        FindIndex searchArea = default(FindIndex);
+       // FindIndex searchArea = default(FindIndex);
         RemoveColumns(ref matrix, FindMaxBelowDiagonalIndex, FindMinAboveDiagonalIndex);
     }
     public delegate int FindIndex(int[,]matrix);
@@ -1150,8 +1119,7 @@ public class Program
     public void Task_3_22(int[,] matrix, out int[] rows, out int[] cols)
     {
 
-        rows = null;
-        cols = null;
+        
         FindNegatives(matrix, CountNegativeInRows, FindMaxNegativePerColumn, out rows, out cols);
     }
     public delegate int[] GetNegativeArray(int[,]matrix);
